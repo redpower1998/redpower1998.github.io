@@ -22,14 +22,14 @@
 
             return disp;
         }
-        function Image_RGBA(_row, _col, _data, _buffer) {  //保存RGBA
+        function Image_RGBA(_row, _col, _data, _buffer) {
             this.row = _row || 0;
             this.col = _col || 0;
             this.buffer = _buffer || new ArrayBuffer(_row * _col * 4);
             this.data = new Uint8ClampedArray(this.buffer);
             _data && this.data.set(_data);
         }
-        function Image_GRAY(_row, _col, _data, _buffer) {   //保存灰度
+        function Image_GRAY(_row, _col, _data, _buffer) {
             this.row = _row || 0;
             this.col = _col || 0;
             this.buffer = _buffer || new ArrayBuffer(_row * _col);
@@ -57,7 +57,7 @@
                 data[i] = data2[i / 4];
                 data[i + 1] = data2[i / 4];
                 data[i + 2] = data2[i / 4];
-                data[i + 3] = 255;  //透明度  
+                data[i + 3] = 255;  
                 i += 3;
             }
             return dst;
@@ -80,7 +80,7 @@
                     else if (val < -SOBEL_CAP)
                         val = -SOBEL_CAP;
 
-                    out_image[width * y + x] = val + SOBEL_CAP; // Adding offset to prevent negative values
+                    out_image[width * y + x] = val + SOBEL_CAP; 
                 }
             }
             return dst;
@@ -248,7 +248,7 @@
                 worker = new Worker(bm_url);
                 var msg = new Array(left_Mat, right_Mat);
                 worker.postMessage(msg);
-                document.getElementById("info_message").innerHTML = "开始计算,可能时间较长,请耐心等待......";
+                document.getElementById("info_message").innerHTML = "Start compute, it may take a long time, please wait patiently......";
                 worker.onmessage = function (event) {
                     var left_ImageRGBA = event.data;
                     _this.left_canvas.width = left_Mat.col;
@@ -258,7 +258,7 @@
                     imageData.data.set(left_ImageRGBA.data);
 
                     _this.left_Ctx.putImageData(imageData, 0, 0);
-                    document.getElementById("info_message").innerHTML = "计算完成!";
+                    document.getElementById("info_message").innerHTML = "Done!";
                     worker.terminate();
                     worker = undefined;
                 };
@@ -284,11 +284,11 @@
     </ul>
     <P>Online Block Matching(BM) Algorithm</P>
     <div>
-        左图片文件 ： <input type="file" name="file" id="left_img_file_id" />
+        Left Image File : <input type="file" name="file" id="left_img_file_id" />
         <br>
-        右图片文件 ： <input type="file" name="file" id="right_img_file_id" />
+        Right Image File : <input type="file" name="file" id="right_img_file_id" />
         <br>
-        <button type="submit" name="btn" value="提交" id="btnId" onclick="begin_bm()">开始计算</button>
+        <button type="submit" name="btn" value="submit" id="btnId" onclick="begin_bm()">Begin</button>
 
     </div>
     <canvas id="left_canvas" width="200" height="100"></canvas>
@@ -296,25 +296,23 @@
     <br>
     <canvas id="disp_image" width="200" height="100"></canvas>
     <br>
-    <div id="info_message">双目块匹配算法，请选择左右图片文件</div>
+    <div id="info_message">Block matching algorithm, please select left and right image files</div>
     <script type="text/javascript" charset="utf-8">
 
         function begin_bm() {
 
-            // 获取文件
             const leftobjFile = document.getElementById('left_img_file_id')
             if (leftobjFile.value === '') {
-                alert('请选择左图像文件！')
+                alert('Please select the left image file!')
                 return
             }
             const rightobjFile = document.getElementById('right_img_file_id')
             if (rightobjFile.value === '') {
-                alert('请选择右图像文件！')
+                alert('Please select the right image file!')
                 return
             }
             var left_Canvas = document.getElementById("disp_image");
 
-            //读取文件内容
             var left_reader = new FileReader();
             left_reader.readAsDataURL(leftobjFile.files[0]);
             var right_reader = new FileReader();
@@ -322,17 +320,16 @@
             var is_left_ok = false;
             var is_right_ok = false;
             left_reader.onload = function (e) {
-                //将结果显示到canvas
                 show_canvas(document.getElementById('left_canvas'), left_reader.result);
                 is_left_ok = true;
-                if (is_right_ok) {  //左右图片都读取OK才能执行BM计算
+                if (is_right_ok) { 
                     StereoBM(left_Canvas, left_reader.result, right_reader.result);
                 }
             }
             right_reader.onload = function (e) {
                 show_canvas(document.getElementById('right_canvas'), right_reader.result);
                 is_right_ok = true;
-                if (is_left_ok) { //左右图片都读取OK才能执行BM计算
+                if (is_left_ok) { 
                     StereoBM(left_Canvas, left_reader.result, right_reader.result);
                 }
             }
